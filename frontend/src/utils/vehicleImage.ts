@@ -1,4 +1,4 @@
-import { Vehicle, ColorVariant } from '../types';
+import { ColorVariant } from '../types';
 
 export const getVehicleImage = (make: string, model: string, category: string, customImageUrl?: string): string => {
   if (customImageUrl && customImageUrl.trim() !== '') {
@@ -31,89 +31,89 @@ export const getVehicleColors = (make: string, model: string, category: string, 
 
   if (full.includes('tesla') || full.includes('model s')) {
     return [
-      { name: 'Stealth Cyan', hex: '#06B6D4', image: heroImage },
-      { name: 'Obsidian Black', hex: '#1E293B', image: heroImage },
-      { name: 'Pearl White', hex: '#F8FAFC', image: heroImage },
-      { name: 'Ultra Red', hex: '#DC2626', image: heroImage },
+      { name: 'Stealth Cyan', hex: '#06B6D4', image: heroImage, isAvailable: true },
+      { name: 'Obsidian Black', hex: '#1E293B', image: heroImage, isAvailable: true },
+      { name: 'Pearl White', hex: '#F8FAFC', image: heroImage, isAvailable: false },
+      { name: 'Ultra Red', hex: '#DC2626', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('911') || full.includes('gt3')) {
     return [
-      { name: 'Sunset Gold', hex: '#F59E0B', image: heroImage },
-      { name: 'Carmine Red', hex: '#B91C1C', image: heroImage },
-      { name: 'Shark Blue', hex: '#2563EB', image: heroImage },
-      { name: 'Chalk Grey', hex: '#94A3B8', image: heroImage },
+      { name: 'Sunset Gold', hex: '#F59E0B', image: heroImage, isAvailable: true },
+      { name: 'Carmine Red', hex: '#B91C1C', image: heroImage, isAvailable: true },
+      { name: 'Shark Blue', hex: '#2563EB', image: heroImage, isAvailable: true },
+      { name: 'Chalk Grey', hex: '#94A3B8', image: heroImage, isAvailable: false },
     ];
   }
 
   if (full.includes('m5') || full.includes('bmw')) {
     return [
-      { name: 'Marina Bay Blue', hex: '#1D4ED8', image: heroImage },
-      { name: 'Black Sapphire', hex: '#0F172A', image: heroImage },
-      { name: 'Alpine White', hex: '#F1F5F9', image: heroImage },
-      { name: 'Isle of Man Green', hex: '#047857', image: heroImage },
+      { name: 'Marina Bay Blue', hex: '#1D4ED8', image: heroImage, isAvailable: true },
+      { name: 'Black Sapphire', hex: '#0F172A', image: heroImage, isAvailable: true },
+      { name: 'Alpine White', hex: '#F1F5F9', image: heroImage, isAvailable: false },
+      { name: 'Isle of Man Green', hex: '#047857', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('taycan')) {
     return [
-      { name: 'Frozen Blue', hex: '#38BDF8', image: heroImage },
-      { name: 'Gentian Blue', hex: '#1E40AF', image: heroImage },
-      { name: 'Carrera White', hex: '#FFFFFF', image: heroImage },
-      { name: 'Midnight Black', hex: '#0F172A', image: heroImage },
+      { name: 'Frozen Blue', hex: '#38BDF8', image: heroImage, isAvailable: true },
+      { name: 'Gentian Blue', hex: '#1E40AF', image: heroImage, isAvailable: false },
+      { name: 'Carrera White', hex: '#FFFFFF', image: heroImage, isAvailable: true },
+      { name: 'Midnight Black', hex: '#0F172A', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('mercedes') || full.includes('s-class') || full.includes('s580')) {
     return [
-      { name: 'Obsidian Black', hex: '#090D16', image: heroImage },
-      { name: 'Diamond White', hex: '#F8FAFC', image: heroImage },
-      { name: 'Ruby Red', hex: '#991B1B', image: heroImage },
-      { name: 'Nautical Blue', hex: '#1E3A8A', image: heroImage },
+      { name: 'Obsidian Black', hex: '#090D16', image: heroImage, isAvailable: true },
+      { name: 'Diamond White', hex: '#F8FAFC', image: heroImage, isAvailable: true },
+      { name: 'Ruby Red', hex: '#991B1B', image: heroImage, isAvailable: false },
+      { name: 'Nautical Blue', hex: '#1E3A8A', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('range rover') || full.includes('autobiography')) {
     return [
-      { name: 'Carpathian Grey', hex: '#334155', image: heroImage },
-      { name: 'Santorini Black', hex: '#020617', image: heroImage },
-      { name: 'Fuji White', hex: '#F8FAFC', image: heroImage },
-      { name: 'Batumi Gold', hex: '#D97706', image: heroImage },
+      { name: 'Carpathian Grey', hex: '#334155', image: heroImage, isAvailable: true },
+      { name: 'Santorini Black', hex: '#020617', image: heroImage, isAvailable: true },
+      { name: 'Fuji White', hex: '#F8FAFC', image: heroImage, isAvailable: true },
+      { name: 'Batumi Gold', hex: '#D97706', image: heroImage, isAvailable: false },
     ];
   }
 
   if (full.includes('f-150') || full.includes('lightning') || full.includes('ford')) {
     return [
-      { name: 'Cyber Silver', hex: '#94A3B8', image: heroImage },
-      { name: 'Agate Black', hex: '#0F172A', image: heroImage },
-      { name: 'Atlas Blue', hex: '#1D4ED8', image: heroImage },
-      { name: 'Rapid Red', hex: '#C2410C', image: heroImage },
+      { name: 'Cyber Silver', hex: '#94A3B8', image: heroImage, isAvailable: true },
+      { name: 'Agate Black', hex: '#0F172A', image: heroImage, isAvailable: false },
+      { name: 'Atlas Blue', hex: '#1D4ED8', image: heroImage, isAvailable: true },
+      { name: 'Rapid Red', hex: '#C2410C', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('rivian') || full.includes('r1t')) {
     return [
-      { name: 'Compass Yellow', hex: '#EAB308', image: heroImage },
-      { name: 'Rivian Blue', hex: '#0284C7', image: heroImage },
-      { name: 'Glacier White', hex: '#FFFFFF', image: heroImage },
-      { name: 'Midnight Black', hex: '#1E293B', image: heroImage },
+      { name: 'Compass Yellow', hex: '#EAB308', image: heroImage, isAvailable: true },
+      { name: 'Rivian Blue', hex: '#0284C7', image: heroImage, isAvailable: true },
+      { name: 'Glacier White', hex: '#FFFFFF', image: heroImage, isAvailable: false },
+      { name: 'Midnight Black', hex: '#1E293B', image: heroImage, isAvailable: true },
     ];
   }
 
   if (full.includes('audi') || full.includes('rs q8')) {
     return [
-      { name: 'Nardo Grey', hex: '#64748B', image: heroImage },
-      { name: 'Mythos Black', hex: '#090D16', image: heroImage },
-      { name: 'Matador Red', hex: '#991B1B', image: heroImage },
-      { name: 'Navarra Blue', hex: '#1D4ED8', image: heroImage },
+      { name: 'Nardo Grey', hex: '#64748B', image: heroImage, isAvailable: true },
+      { name: 'Mythos Black', hex: '#090D16', image: heroImage, isAvailable: true },
+      { name: 'Matador Red', hex: '#991B1B', image: heroImage, isAvailable: false },
+      { name: 'Navarra Blue', hex: '#1D4ED8', image: heroImage, isAvailable: true },
     ];
   }
 
   return [
-    { name: 'Stealth Cyan', hex: '#06B6D4', image: heroImage },
-    { name: 'Obsidian Black', hex: '#090D16', image: heroImage },
-    { name: 'Alpine White', hex: '#FFFFFF', image: heroImage },
-    { name: 'Sunset Amber Gold', hex: '#F59E0B', image: heroImage },
+    { name: 'Stealth Cyan', hex: '#06B6D4', image: heroImage, isAvailable: true },
+    { name: 'Obsidian Black', hex: '#090D16', image: heroImage, isAvailable: true },
+    { name: 'Alpine White', hex: '#FFFFFF', image: heroImage, isAvailable: false },
+    { name: 'Sunset Amber Gold', hex: '#F59E0B', image: heroImage, isAvailable: true },
   ];
 };

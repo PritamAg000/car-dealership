@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Vehicle, ColorVariant } from '../types';
-import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette, Check } from 'lucide-react';
+import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette, Check, Ban } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getVehicleColors } from '../utils/vehicleImage';
 import { VehicleVisual } from './VehicleVisual';
@@ -23,11 +23,16 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   isPurchasing = false,
 }) => {
   const { isAdmin } = useAuth();
-  const isOutOfStock = vehicle.quantity === 0;
 
-  // Load color variants for this vehicle (prioritizes vehicle.image_url if set by Admin)
+  // Load color variants for this vehicle (with available vs unavailable status)
   const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category, vehicle.image_url);
-  const [selectedColor, setSelectedColor] = useState<ColorVariant>(availableColors[0]);
+  
+  // Pick the first available color or default to first
+  const initialColor = availableColors.find(c => c.isAvailable !== false) || availableColors[0];
+  const [selectedColor, setSelectedColor] = useState<ColorVariant>(initialColor);
+
+  const isColorUnavailable = selectedColor.isAvailable === false;
+  const isOutOfStock = vehicle.quantity === 0 || isColorUnavailable;
 
   // Select category icon & badge styling
   const getCategoryDetails = (category: string) => {
@@ -74,10 +79,10 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   return (
     <div
       className={`glass-card rounded-2xl overflow-hidden flex flex-col justify-between group relative border ${
-        isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
+        vehicle.quantity === 0 ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Real Vehicle Photo Header — Displays photo url set by Admin or matched model photo */}
+      {/* Real Vehicle Photo Header */}
       <div className="relative">
         <VehicleVisual
           colorHex={selectedColor.hex}
@@ -98,7 +103,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
 
         {/* Stock Status Badge */}
         <div className="absolute top-4 right-4 z-10">
-          {isOutOfStock ? (
+          {vehicle.quantity === 0 ? (
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-500/80 text-white border border-rose-400 uppercase tracking-wider shadow-lg backdrop-blur-md">
               Out of Stock
             </span>
@@ -121,18 +126,27 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             {vehicle.model}
           </h2>
 
-          {/* Color Swatch Picker Section */}
+          {/* Color Swatch Picker Section with Availability Indicators */}
           <div className="mb-4 p-3 rounded-xl bg-luxury-dark/60 border border-luxury-border/30">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-luxury-muted flex items-center gap-1.5 font-medium">
                 <Palette className="w-3.5 h-3.5 text-amber-400" /> Color Finish:
               </span>
-              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+              <span className="text-xs font-bold flex items-center gap-1.5">
                 <span
                   className="w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm"
                   style={{ backgroundColor: selectedColor.hex }}
                 ></span>
-                {selectedColor.name}
+                <span className="text-white">{selectedColor.name}</span>
+                {selectedColor.isAvailable === false ? (
+                  <span className="text-[10px] text-rose-400 font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-500/20 border border-rose-500/40">
+                    Unavailable
+                  </span>
+                ) : (
+                  <span className="text-[10px] text-emerald-400 font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40">
+                    Available
+                  </span>
+                )}
               </span>
             </div>
 
@@ -140,20 +154,27 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             <div className="flex items-center gap-2.5 pt-1">
               {availableColors.map((col) => {
                 const isSelected = selectedColor.name === col.name;
+                const isAvailable = col.isAvailable !== false;
+
                 return (
                   <button
                     key={col.name}
                     onClick={() => setSelectedColor(col)}
-                    title={col.name}
+                    title={`${col.name} (${isAvailable ? 'Available' : 'Out of Stock'})`}
                     className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center relative ${
                       isSelected
                         ? 'border-white scale-110 shadow-lg shadow-black/50 ring-2 ring-luxury-accent'
-                        : 'border-slate-500/60 opacity-80 hover:opacity-100 hover:scale-105'
+                        : isAvailable
+                        ? 'border-slate-500/60 opacity-90 hover:opacity-100 hover:scale-105'
+                        : 'border-rose-500/40 opacity-40 hover:opacity-75 hover:scale-105 bg-slate-900'
                     }`}
                     style={{ backgroundColor: col.hex }}
                   >
-                    {isSelected && (
+                    {isSelected && isAvailable && (
                       <Check className={`w-3.5 h-3.5 stroke-[3] ${col.hex === '#FFFFFF' || col.hex === '#F8FAFC' ? 'text-black' : 'text-white'}`} />
+                    )}
+                    {!isAvailable && (
+                      <Ban className="w-3.5 h-3.5 text-rose-400 stroke-[2.5]" />
                     )}
                   </button>
                 );
@@ -184,10 +205,20 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             >
               {isPurchasing ? (
                 <div className="w-5 h-5 border-2 border-luxury-dark border-t-transparent rounded-full animate-spin"></div>
+              ) : isColorUnavailable ? (
+                <>
+                  <Ban className="w-4 h-4 text-rose-400" />
+                  <span>Unavailable in {selectedColor.name.split(' ')[0]}</span>
+                </>
+              ) : vehicle.quantity === 0 ? (
+                <>
+                  <Ban className="w-4 h-4 text-rose-400" />
+                  <span>Out of Stock</span>
+                </>
               ) : (
                 <>
                   <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
-                  <span>{isOutOfStock ? 'Out of Stock' : `Purchase in ${selectedColor.name.split(' ')[0]}`}</span>
+                  <span>Purchase in {selectedColor.name.split(' ')[0]}</span>
                 </>
               )}
             </button>

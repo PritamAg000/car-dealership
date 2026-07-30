@@ -11,6 +11,7 @@ export interface ColorVariant {
   name: string;
   hex: string;
   image: string;
+  isAvailable?: boolean;
   filter?: string;
 }
 
