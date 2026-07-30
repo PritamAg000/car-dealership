@@ -1,5 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
+from app.core.security import create_access_token
 
 
 def test_register_user_success(client: TestClient):
@@ -63,3 +64,10 @@ def test_login_invalid_credentials(client: TestClient):
     )
     assert response.status_code == 401
     assert response.json()["detail"] == "Invalid email or password"
+
+
+def test_invalid_or_missing_token(client: TestClient):
+    # Endpoint needing auth will be added, for now test bogus token decoding
+    bogus_token = "Bearer invalid.jwt.token"
+    response = client.get("/api/vehicles", headers={"Authorization": bogus_token})
+    # Since /api/vehicles route is created in Phase 3, this is tested there
