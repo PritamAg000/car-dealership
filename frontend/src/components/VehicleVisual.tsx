@@ -10,8 +10,6 @@ interface VehicleVisualProps {
 }
 
 export const VehicleVisual: React.FC<VehicleVisualProps> = ({
-  colorHex,
-  colorName,
   photoUrl,
   make,
   model,
@@ -20,14 +18,13 @@ export const VehicleVisual: React.FC<VehicleVisualProps> = ({
 
   return (
     <div className="relative w-full h-56 bg-slate-950 overflow-hidden group">
-      {/* Real HD Car Photograph for the selected color */}
+      {/* Authentic HD Hero Car Photograph — Unaltered & Exact Match to Model Name */}
       {!imageError ? (
         <img
-          key={photoUrl}
           src={photoUrl}
-          alt={`${make} ${model} in ${colorName}`}
+          alt={`${make} ${model}`}
           onError={() => setImageError(true)}
-          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 animate-fadeIn"
+          className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-slate-900 to-slate-950 flex items-center justify-center text-slate-500">
@@ -35,14 +32,8 @@ export const VehicleVisual: React.FC<VehicleVisualProps> = ({
         </div>
       )}
 
-      {/* Subtle Overlay Gradient for luxury aesthetics */}
+      {/* Subtle Overlay Gradient for luxury contrast */}
       <div className="absolute inset-0 bg-gradient-to-t from-luxury-dark via-transparent to-black/30 pointer-events-none" />
-
-      {/* Selected Color Paint Accent Line at top */}
-      <div
-        className="absolute top-0 left-0 right-0 h-1.5 transition-colors duration-500 shadow-md"
-        style={{ backgroundColor: colorHex }}
-      />
     </div>
   );
 };
