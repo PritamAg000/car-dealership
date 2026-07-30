@@ -1,6 +1,7 @@
 import React from 'react';
 import { X, CheckCircle2, Shield, Calendar, Truck, Award, Palette, Hash } from 'lucide-react';
 import { PurchaseReceipt } from '../types';
+import { getVehicleImage } from '../utils/vehicleImage';
 
 interface PurchaseReceiptModalProps {
   receipt: PurchaseReceipt | null;
@@ -23,15 +24,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
     maximumFractionDigits: 0,
   }).format(vehicle.price);
 
-  // Category image selection
-  const getCategoryImage = (category: string) => {
-    const cat = category.toLowerCase();
-    if (cat.includes('ev')) return '/images/ev.jpg';
-    if (cat.includes('suv')) return '/images/suv.jpg';
-    if (cat.includes('truck')) return '/images/truck.jpg';
-    if (cat.includes('coupe')) return '/images/coupe.jpg';
-    return '/images/sedan.jpg';
-  };
+  const vehiclePhoto = getVehicleImage(vehicle.make, vehicle.model, vehicle.category);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -83,7 +76,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 items-center rounded-2xl bg-luxury-card/60 p-5 border border-luxury-border/40">
             <div className="sm:col-span-2 h-44 rounded-xl overflow-hidden relative shadow-lg">
               <img
-                src={getCategoryImage(vehicle.category)}
+                src={vehiclePhoto}
                 alt={`${vehicle.make} ${vehicle.model}`}
                 className="w-full h-full object-cover object-center"
               />

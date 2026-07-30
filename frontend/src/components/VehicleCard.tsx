@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Vehicle } from '../types';
 import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getVehicleImage } from '../utils/vehicleImage';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -24,13 +25,14 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   const isOutOfStock = vehicle.quantity === 0;
   const [imageError, setImageError] = useState(false);
 
-  // Select category theme & image
+  const vehiclePhoto = getVehicleImage(vehicle.make, vehicle.model, vehicle.category);
+
+  // Select category icon & badge styling
   const getCategoryDetails = (category: string) => {
     const cat = category.toLowerCase();
     if (cat.includes('ev') || cat.includes('electric')) {
       return {
         icon: Zap,
-        image: '/images/ev.jpg',
         badge: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300',
         text: 'text-cyan-400'
       };
@@ -38,7 +40,6 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
     if (cat.includes('suv')) {
       return {
         icon: Shield,
-        image: '/images/suv.jpg',
         badge: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
         text: 'text-emerald-400'
       };
@@ -46,7 +47,6 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
     if (cat.includes('truck')) {
       return {
         icon: Truck,
-        image: '/images/truck.jpg',
         badge: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
         text: 'text-amber-400'
       };
@@ -54,14 +54,12 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
     if (cat.includes('coupe')) {
       return {
         icon: Car,
-        image: '/images/coupe.jpg',
         badge: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',
         text: 'text-yellow-400'
       };
     }
     return {
       icon: Car,
-      image: '/images/sedan.jpg',
       badge: 'bg-purple-500/20 border-purple-500/40 text-purple-300',
       text: 'text-purple-400'
     };
@@ -82,11 +80,11 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Real Vehicle Photo Header */}
-      <div className="h-52 w-full relative overflow-hidden bg-slate-900">
+      {/* Vehicle Photo Header */}
+      <div className="h-56 w-full relative overflow-hidden bg-slate-900">
         {!imageError ? (
           <img
-            src={details.image}
+            src={vehiclePhoto}
             alt={`${vehicle.make} ${vehicle.model}`}
             onError={() => setImageError(true)}
             className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
@@ -133,11 +131,11 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             {vehicle.model}
           </h2>
 
-          {/* Color Tag */}
+          {/* Exterior Color Badge */}
           <div className="flex items-center gap-1.5 text-xs text-luxury-muted mb-4">
             <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span>Color:</span>
-            <span className="font-medium text-slate-200">{vehicle.color || 'Midnight Metallic Navy'}</span>
+            <span>Exterior Color:</span>
+            <span className="font-semibold text-slate-100">{vehicle.color || 'Midnight Metallic Navy'}</span>
           </div>
         </div>
 
