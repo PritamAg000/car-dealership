@@ -42,7 +42,8 @@ describe('VehicleCard Component Tests', () => {
     expect(screen.getByText('Porsche')).toBeInTheDocument();
     expect(screen.getByText('911 GT3')).toBeInTheDocument();
     expect(screen.getByText('$180,000')).toBeInTheDocument();
-    expect(screen.getByText('Purchase Vehicle')).not.toBeDisabled();
+    const purchaseBtn = screen.getByRole('button', { name: /purchase/i });
+    expect(purchaseBtn).not.toBeDisabled();
   });
 
   it('disables purchase button and shows Out of Stock when quantity is 0', () => {

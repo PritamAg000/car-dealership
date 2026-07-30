@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Vehicle } from '../types';
-import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette } from 'lucide-react';
+import { Vehicle, ColorVariant } from '../types';
+import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette, Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { getVehicleImage } from '../utils/vehicleImage';
+import { getVehicleColors } from '../utils/vehicleImage';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
-  onPurchase: (vehicle: Vehicle) => void;
+  onPurchase: (vehicle: Vehicle, selectedColor: ColorVariant) => void;
   onEdit?: (vehicle: Vehicle) => void;
   onDelete?: (vehicle: Vehicle) => void;
   onRestock?: (vehicle: Vehicle) => void;
@@ -25,7 +25,9 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   const isOutOfStock = vehicle.quantity === 0;
   const [imageError, setImageError] = useState(false);
 
-  const vehiclePhoto = getVehicleImage(vehicle.make, vehicle.model, vehicle.category);
+  // Load color variants for this vehicle
+  const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category);
+  const [selectedColor, setSelectedColor] = useState<ColorVariant>(availableColors[0]);
 
   // Select category icon & badge styling
   const getCategoryDetails = (category: string) => {
@@ -80,14 +82,14 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Vehicle Photo Header */}
+      {/* Real Vehicle Photo Header - Updates dynamically per color choice */}
       <div className="h-56 w-full relative overflow-hidden bg-slate-900">
         {!imageError ? (
           <img
-            src={vehiclePhoto}
-            alt={`${vehicle.make} ${vehicle.model}`}
+            src={selectedColor.image}
+            alt={`${vehicle.make} ${vehicle.model} in ${selectedColor.name}`}
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700 brightness-95 group-hover:brightness-100"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-luxury-card to-slate-900 flex items-center justify-center">
@@ -131,11 +133,39 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             {vehicle.model}
           </h2>
 
-          {/* Exterior Color Badge */}
-          <div className="flex items-center gap-1.5 text-xs text-luxury-muted mb-4">
-            <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
-            <span>Exterior Color:</span>
-            <span className="font-semibold text-slate-100">{vehicle.color || 'Midnight Metallic Navy'}</span>
+          {/* Color Selector Section */}
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs text-luxury-muted flex items-center gap-1">
+                <Palette className="w-3.5 h-3.5 text-amber-400" /> Color:
+              </span>
+              <span className="text-xs font-semibold text-amber-300">{selectedColor.name}</span>
+            </div>
+
+            {/* Swatch Color Pickers */}
+            <div className="flex items-center gap-2">
+              {availableColors.map((col) => {
+                const isSelected = selectedColor.name === col.name;
+                return (
+                  <button
+                    key={col.name}
+                    onClick={() => {
+                      setSelectedColor(col);
+                      setImageError(false);
+                    }}
+                    title={col.name}
+                    className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
+                      isSelected
+                        ? 'border-luxury-accent scale-110 shadow-lg shadow-luxury-accent/30'
+                        : 'border-slate-600 opacity-70 hover:opacity-100 hover:scale-105'
+                    }`}
+                    style={{ backgroundColor: col.hex }}
+                  >
+                    {isSelected && <Check className="w-3 h-3 text-luxury-dark stroke-[3]" />}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 
@@ -151,7 +181,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
           {/* Action Buttons */}
           <div className="space-y-3">
             <button
-              onClick={() => onPurchase(vehicle)}
+              onClick={() => onPurchase(vehicle, selectedColor)}
               disabled={isOutOfStock || isPurchasing}
               className={`w-full py-3 px-4 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-md ${
                 isOutOfStock
@@ -164,7 +194,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
               ) : (
                 <>
                   <ShoppingBag className="w-4 h-4 stroke-[2.5]" />
-                  <span>{isOutOfStock ? 'Out of Stock' : 'Purchase Vehicle'}</span>
+                  <span>{isOutOfStock ? 'Out of Stock' : `Purchase in ${selectedColor.name.split(' ')[0]}`}</span>
                 </>
               )}
             </button>

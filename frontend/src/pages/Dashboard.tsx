@@ -8,7 +8,7 @@ import { PurchaseReceiptModal } from '../components/PurchaseReceiptModal';
 import { Toast, ToastProps } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Vehicle, VehicleCreate, SearchFilters, PurchaseReceipt } from '../types';
+import { Vehicle, VehicleCreate, SearchFilters, PurchaseReceipt, ColorVariant } from '../types';
 import { Car, AlertTriangle, Layers } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
@@ -68,8 +68,8 @@ export const Dashboard: React.FC = () => {
     fetchVehicles();
   }, [fetchVehicles]);
 
-  // Purchase Handler with Receipt Modal
-  const handlePurchase = async (vehicle: Vehicle) => {
+  // Purchase Handler with Selected Color Support & Receipt Modal
+  const handlePurchase = async (vehicle: Vehicle, selectedColor: ColorVariant) => {
     if (!token) return;
     try {
       setPurchasingId(vehicle.id);
@@ -78,10 +78,12 @@ export const Dashboard: React.FC = () => {
       // Immediate UI update
       setVehicles((prev) => prev.map((v) => (v.id === vehicle.id ? updated : v)));
 
-      // Construct detailed purchase receipt
+      // Construct detailed purchase receipt with selected color & image
       const receiptData: PurchaseReceipt = {
         orderId: `APX-${Math.floor(100000 + Math.random() * 900000)}`,
         vehicle: updated,
+        selectedColor: selectedColor.name,
+        selectedImage: selectedColor.image,
         buyerEmail: user?.email || 'customer@dealership.com',
         purchaseDate: new Date().toLocaleDateString('en-US', {
           year: 'numeric',
@@ -101,7 +103,7 @@ export const Dashboard: React.FC = () => {
 
       setReceipt(receiptData);
       setIsReceiptOpen(true);
-      showToast(`Successfully purchased ${vehicle.make} ${vehicle.model}!`, 'success');
+      showToast(`Successfully purchased ${vehicle.make} ${vehicle.model} in ${selectedColor.name}!`, 'success');
     } catch (err: any) {
       showToast(err.message || 'Purchase failed.', 'error');
       fetchVehicles();
@@ -166,7 +168,7 @@ export const Dashboard: React.FC = () => {
               Discover Premier Inventory
             </h2>
             <p className="text-luxury-muted text-sm sm:text-base mt-2">
-              Browse, filter, and reserve high-performance luxury vehicles with custom exterior finishes.
+              Select your favorite exterior color finish, preview photos live, and reserve luxury vehicles in real-time.
             </p>
           </div>
         </div>

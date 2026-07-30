@@ -1,7 +1,6 @@
 import React from 'react';
 import { X, CheckCircle2, Shield, Calendar, Truck, Award, Palette, Hash } from 'lucide-react';
 import { PurchaseReceipt } from '../types';
-import { getVehicleImage } from '../utils/vehicleImage';
 
 interface PurchaseReceiptModalProps {
   receipt: PurchaseReceipt | null;
@@ -16,15 +15,13 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
 }) => {
   if (!isOpen || !receipt) return null;
 
-  const { vehicle, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
+  const { vehicle, selectedColor, selectedImage, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(vehicle.price);
-
-  const vehiclePhoto = getVehicleImage(vehicle.make, vehicle.model, vehicle.category);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn">
@@ -76,8 +73,8 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 items-center rounded-2xl bg-luxury-card/60 p-5 border border-luxury-border/40">
             <div className="sm:col-span-2 h-44 rounded-xl overflow-hidden relative shadow-lg">
               <img
-                src={vehiclePhoto}
-                alt={`${vehicle.make} ${vehicle.model}`}
+                src={selectedImage}
+                alt={`${vehicle.make} ${vehicle.model} in ${selectedColor}`}
                 className="w-full h-full object-cover object-center"
               />
               <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 text-luxury-accent border border-luxury-accent/40 backdrop-blur-md">
@@ -93,13 +90,13 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
                 <h3 className="text-2xl font-bold text-white">{vehicle.model}</h3>
               </div>
 
-              {/* Vehicle Exterior Color Badge */}
+              {/* Selected Color Badge */}
               <div className="flex items-center gap-2">
                 <Palette className="w-4 h-4 text-amber-400" />
-                <span className="text-xs text-luxury-muted">Exterior Color:</span>
+                <span className="text-xs text-luxury-muted">Selected Finish:</span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-200">
                   <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 shadow-sm"></span>
-                  {vehicle.color || 'Midnight Metallic Navy'}
+                  {selectedColor}
                 </span>
               </div>
 
@@ -138,7 +135,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
         {/* Footer */}
         <div className="px-8 py-5 bg-luxury-dark/90 border-t border-luxury-border/40 flex items-center justify-between">
           <div className="text-xs text-luxury-muted">
-            Confirmation copy sent to <span className="text-white font-medium">{buyerEmail}</span>
+            Order confirmation sent to <span className="text-white font-medium">{buyerEmail}</span>
           </div>
           <button
             onClick={onClose}

@@ -7,12 +7,19 @@ export interface User {
 
 export type UserRole = 'customer' | 'admin';
 
+export interface ColorVariant {
+  name: string;
+  hex: string;
+  image: string;
+}
+
 export interface Vehicle {
   id: string;
   make: string;
   model: string;
   category: string;
   color?: string;
+  colors?: ColorVariant[];
   price: number;
   quantity: number;
   created_at?: string;
@@ -54,6 +61,8 @@ export interface SearchFilters {
 export interface PurchaseReceipt {
   orderId: string;
   vehicle: Vehicle;
+  selectedColor: string;
+  selectedImage: string;
   buyerEmail: string;
   purchaseDate: string;
   deliveryDate: string;
