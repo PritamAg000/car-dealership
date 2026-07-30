@@ -25,7 +25,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   const { isAdmin } = useAuth();
   const isOutOfStock = vehicle.quantity === 0;
 
-  // Load color variants for this vehicle (all sharing the exact same car model photo)
+  // Load color variants for this vehicle (each with its exact real photograph file)
   const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category);
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(availableColors[0]);
 
@@ -77,14 +77,15 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Vehicle Visual Header — Real car photo with metallic color blend shader */}
+      {/* Real Vehicle Photo Header — Displays real HD photo for selected color variant */}
       <div className="relative">
         <VehicleVisual
           colorHex={selectedColor.hex}
-          category={vehicle.category}
+          colorName={selectedColor.name}
           photoUrl={selectedColor.image}
           make={vehicle.make}
           model={vehicle.model}
+          category={vehicle.category}
         />
 
         {/* Category Badge */}
@@ -124,7 +125,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
           <div className="mb-4 p-3 rounded-xl bg-luxury-dark/60 border border-luxury-border/30">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-luxury-muted flex items-center gap-1.5 font-medium">
-                <Palette className="w-3.5 h-3.5 text-amber-400" /> Exterior Paint:
+                <Palette className="w-3.5 h-3.5 text-amber-400" /> Color Finish:
               </span>
               <span className="text-xs font-bold text-white flex items-center gap-1.5">
                 <span
