@@ -14,6 +14,7 @@ class Vehicle(Base):
     make = Column(String(100), nullable=False)
     model = Column(String(100), nullable=False)
     category = Column(String(50), nullable=False)
+    color = Column(String(50), nullable=True, default="Midnight Metallic Navy")
     price = Column(Float, nullable=False)
     quantity = Column(Integer, nullable=False, default=0)
     created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)

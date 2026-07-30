@@ -18,6 +18,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
   const [make, setMake] = useState('');
   const [model, setModel] = useState('');
   const [category, setCategory] = useState('sedan');
+  const [color, setColor] = useState('Midnight Metallic Navy');
   const [price, setPrice] = useState('');
   const [quantity, setQuantity] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -28,12 +29,14 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
       setMake(vehicleToEdit.make);
       setModel(vehicleToEdit.model);
       setCategory(vehicleToEdit.category);
+      setColor(vehicleToEdit.color || 'Midnight Metallic Navy');
       setPrice(vehicleToEdit.price.toString());
       setQuantity(vehicleToEdit.quantity.toString());
     } else {
       setMake('');
       setModel('');
       setCategory('sedan');
+      setColor('Midnight Metallic Navy');
       setPrice('');
       setQuantity('1');
     }
@@ -70,6 +73,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
         make: make.trim(),
         model: model.trim(),
         category: category.trim(),
+        color: color.trim() || 'Midnight Metallic Navy',
         price: numPrice,
         quantity: numQty,
       });
@@ -136,7 +140,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-luxury-muted uppercase tracking-wider mb-1.5">
                 Category *
@@ -154,6 +158,21 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
               </select>
             </div>
 
+            <div>
+              <label className="block text-xs font-semibold text-luxury-muted uppercase tracking-wider mb-1.5">
+                Exterior Color
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Sunset Amber Gold"
+                value={color}
+                onChange={(e) => setColor(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl bg-luxury-dark/80 border border-luxury-border/60 text-white text-sm focus:outline-none focus:border-luxury-accent"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-luxury-muted uppercase tracking-wider mb-1.5">
                 Price ($) *

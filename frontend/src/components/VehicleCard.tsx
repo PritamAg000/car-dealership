@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Vehicle } from '../types';
-import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck } from 'lucide-react';
+import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface VehicleCardProps {
@@ -129,9 +129,16 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
           <div className="text-xs uppercase tracking-widest text-luxury-accent font-bold mb-1">
             {vehicle.make}
           </div>
-          <h2 className="text-xl font-bold text-white tracking-tight mb-3 group-hover:text-amber-200 transition-colors">
+          <h2 className="text-xl font-bold text-white tracking-tight mb-2 group-hover:text-amber-200 transition-colors">
             {vehicle.model}
           </h2>
+
+          {/* Color Tag */}
+          <div className="flex items-center gap-1.5 text-xs text-luxury-muted mb-4">
+            <Palette className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>Color:</span>
+            <span className="font-medium text-slate-200">{vehicle.color || 'Midnight Metallic Navy'}</span>
+          </div>
         </div>
 
         <div>

@@ -4,14 +4,15 @@ import { VehicleCard } from '../components/VehicleCard';
 import { SearchFilterBar } from '../components/SearchFilterBar';
 import { AdminVehicleModal } from '../components/AdminVehicleModal';
 import { RestockModal } from '../components/RestockModal';
+import { PurchaseReceiptModal } from '../components/PurchaseReceiptModal';
 import { Toast, ToastProps } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Vehicle, VehicleCreate, SearchFilters } from '../types';
+import { Vehicle, VehicleCreate, SearchFilters, PurchaseReceipt } from '../types';
 import { Car, AlertTriangle, Layers } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
-  const { token, isAdmin } = useAuth();
+  const { user, token, isAdmin } = useAuth();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -25,6 +26,10 @@ export const Dashboard: React.FC = () => {
   const [restockVehicle, setRestockVehicle] = useState<Vehicle | null>(null);
 
   const [deleteTarget, setDeleteTarget] = useState<Vehicle | null>(null);
+
+  // Purchase Receipt Modal State
+  const [receipt, setReceipt] = useState<PurchaseReceipt | null>(null);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
 
   // Toast state
   const [toast, setToast] = useState<Omit<ToastProps, 'onClose'> | null>(null);
@@ -63,7 +68,7 @@ export const Dashboard: React.FC = () => {
     fetchVehicles();
   }, [fetchVehicles]);
 
-  // Purchase Handler
+  // Purchase Handler with Receipt Modal
   const handlePurchase = async (vehicle: Vehicle) => {
     if (!token) return;
     try {
@@ -72,10 +77,33 @@ export const Dashboard: React.FC = () => {
 
       // Immediate UI update
       setVehicles((prev) => prev.map((v) => (v.id === vehicle.id ? updated : v)));
+
+      // Construct detailed purchase receipt
+      const receiptData: PurchaseReceipt = {
+        orderId: `APX-${Math.floor(100000 + Math.random() * 900000)}`,
+        vehicle: updated,
+        buyerEmail: user?.email || 'customer@dealership.com',
+        purchaseDate: new Date().toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
+        deliveryDate: '3-5 Business Days (Express Delivery)',
+        warranty: '4-Year / 50,000-Mile Luxury Warranty',
+        specifications: {
+          drivetrain: updated.category === 'EV' ? 'Dual-Motor AWD Electric' : '4.4L Twin-Turbo V8 AWD',
+          engine: updated.category === 'EV' ? '1,020 HP High Performance' : '617 HP Gas Engine',
+          acceleration: updated.category === 'EV' ? '0-60 mph in 1.99s' : '0-60 mph in 3.1s',
+        },
+      };
+
+      setReceipt(receiptData);
+      setIsReceiptOpen(true);
       showToast(`Successfully purchased ${vehicle.make} ${vehicle.model}!`, 'success');
     } catch (err: any) {
       showToast(err.message || 'Purchase failed.', 'error');
-      // Refresh single vehicle data on stock conflict
       fetchVehicles();
     } finally {
       setPurchasingId(null);
@@ -138,7 +166,7 @@ export const Dashboard: React.FC = () => {
               Discover Premier Inventory
             </h2>
             <p className="text-luxury-muted text-sm sm:text-base mt-2">
-              Browse, filter, and reserve high-performance luxury vehicles in real-time.
+              Browse, filter, and reserve high-performance luxury vehicles with custom exterior finishes.
             </p>
           </div>
         </div>
@@ -205,6 +233,13 @@ export const Dashboard: React.FC = () => {
         onClose={() => setIsRestockOpen(false)}
         vehicle={restockVehicle}
         onRestock={handleRestock}
+      />
+
+      {/* Post-Purchase Order Details Modal */}
+      <PurchaseReceiptModal
+        isOpen={isReceiptOpen}
+        onClose={() => setIsReceiptOpen(false)}
+        receipt={receipt}
       />
 
       {/* Admin Delete Confirmation Modal */}

@@ -12,6 +12,7 @@ export interface Vehicle {
   make: string;
   model: string;
   category: string;
+  color?: string;
   price: number;
   quantity: number;
   created_at?: string;
@@ -22,6 +23,7 @@ export interface VehicleCreate {
   make: string;
   model: string;
   category: string;
+  color?: string;
   price: number;
   quantity: number;
 }
@@ -30,6 +32,7 @@ export interface VehicleUpdate {
   make?: string;
   model?: string;
   category?: string;
+  color?: string;
   price?: number;
   quantity?: number;
 }
@@ -46,4 +49,18 @@ export interface SearchFilters {
   category?: string;
   min_price?: number;
   max_price?: number;
+}
+
+export interface PurchaseReceipt {
+  orderId: string;
+  vehicle: Vehicle;
+  buyerEmail: string;
+  purchaseDate: string;
+  deliveryDate: string;
+  warranty: string;
+  specifications: {
+    drivetrain: string;
+    engine: string;
+    acceleration: string;
+  };
 }

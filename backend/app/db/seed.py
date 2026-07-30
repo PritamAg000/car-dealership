@@ -37,22 +37,23 @@ def seed_database():
             )
             db.add(customer_user)
 
-        # Check and seed vehicles
-        if db.query(Vehicle).count() == 0:
-            vehicles = [
-                Vehicle(make="Tesla", model="Model S Plaid", category="EV", price=89990.0, quantity=3),
-                Vehicle(make="Porsche", model="Taycan Turbo", category="EV", price=150900.0, quantity=2),
-                Vehicle(make="BMW", model="M5 Competition", category="sedan", price=107900.0, quantity=4),
-                Vehicle(make="Mercedes-Benz", model="S-Class S580", category="sedan", price=117700.0, quantity=0), # Out of stock!
-                Vehicle(make="Range Rover", model="Autobiography", category="SUV", price=141100.0, quantity=5),
-                Vehicle(make="Ford", model="F-150 Lightning", category="truck", price=54995.0, quantity=6),
-                Vehicle(make="Rivian", model="R1T Launch Edition", category="truck", price=73000.0, quantity=1),
-                Vehicle(make="Audi", model="RS Q8", category="SUV", price=125800.0, quantity=2),
-            ]
-            db.add_all(vehicles)
+        # Check and seed vehicles with colors
+        db.query(Vehicle).delete()
+        vehicles = [
+            Vehicle(make="Tesla", model="Model S Plaid", category="EV", color="Stealth Metallic Cyan", price=89990.0, quantity=3),
+            Vehicle(make="Porsche", model="Taycan Turbo S", category="EV", color="Frozen Metallic Blue", price=150900.0, quantity=2),
+            Vehicle(make="BMW", model="M5 Competition", category="sedan", color="Marina Bay Blue", price=107900.0, quantity=4),
+            Vehicle(make="Mercedes-Benz", model="S-Class S580", category="sedan", color="Obsidian Black Metallic", price=117700.0, quantity=0), # Out of stock!
+            Vehicle(make="Range Rover", model="Autobiography", category="SUV", color="Carpathian Grey", price=141100.0, quantity=5),
+            Vehicle(make="Ford", model="F-150 Lightning", category="truck", color="Cyber Silver Metallic", price=54995.0, quantity=6),
+            Vehicle(make="Rivian", model="R1T Launch Edition", category="truck", color="Compass Yellow Metallic", price=73000.0, quantity=1),
+            Vehicle(make="Audi", model="RS Q8", category="SUV", color="Nardo Grey Metallic", price=125800.0, quantity=2),
+            Vehicle(make="Porsche", model="911 GT3 RS", category="coupe", color="Sunset Amber Gold", price=223800.0, quantity=2),
+        ]
+        db.add_all(vehicles)
 
         db.commit()
-        print("Database seeded successfully with demo accounts!")
+        print("Database seeded successfully with vehicle colors and demo accounts!")
     except Exception as e:
         db.rollback()
         print(f"Error seeding database: {e}")
