@@ -78,12 +78,13 @@ export const Dashboard: React.FC = () => {
       // Immediate UI update
       setVehicles((prev) => prev.map((v) => (v.id === vehicle.id ? updated : v)));
 
-      // Construct detailed purchase receipt with selected color & image
+      // Construct detailed purchase receipt with selected color, image, and filter
       const receiptData: PurchaseReceipt = {
         orderId: `APX-${Math.floor(100000 + Math.random() * 900000)}`,
         vehicle: updated,
         selectedColor: selectedColor.name,
         selectedImage: selectedColor.image,
+        selectedFilter: selectedColor.filter,
         buyerEmail: user?.email || 'customer@dealership.com',
         purchaseDate: new Date().toLocaleDateString('en-US', {
           year: 'numeric',

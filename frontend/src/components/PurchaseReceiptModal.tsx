@@ -15,7 +15,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
 }) => {
   if (!isOpen || !receipt) return null;
 
-  const { vehicle, selectedColor, selectedImage, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
+  const { vehicle, selectedColor, selectedImage, selectedFilter, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -71,10 +71,11 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
 
           {/* Vehicle Visual Header & Specifications */}
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-6 items-center rounded-2xl bg-luxury-card/60 p-5 border border-luxury-border/40">
-            <div className="sm:col-span-2 h-44 rounded-xl overflow-hidden relative shadow-lg">
+            <div className="sm:col-span-2 h-44 rounded-xl overflow-hidden relative shadow-lg bg-slate-950">
               <img
                 src={selectedImage}
                 alt={`${vehicle.make} ${vehicle.model} in ${selectedColor}`}
+                style={{ filter: selectedFilter || 'none' }}
                 className="w-full h-full object-cover object-center"
               />
               <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 text-luxury-accent border border-luxury-accent/40 backdrop-blur-md">

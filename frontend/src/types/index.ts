@@ -11,6 +11,7 @@ export interface ColorVariant {
   name: string;
   hex: string;
   image: string;
+  filter?: string;
 }
 
 export interface Vehicle {
@@ -63,6 +64,7 @@ export interface PurchaseReceipt {
   vehicle: Vehicle;
   selectedColor: string;
   selectedImage: string;
+  selectedFilter?: string;
   buyerEmail: string;
   purchaseDate: string;
   deliveryDate: string;

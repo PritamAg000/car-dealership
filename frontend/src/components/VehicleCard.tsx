@@ -25,7 +25,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   const isOutOfStock = vehicle.quantity === 0;
   const [imageError, setImageError] = useState(false);
 
-  // Load color variants for this vehicle
+  // Load color variants for this vehicle (all sharing the exact same car model photo)
   const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category);
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(availableColors[0]);
 
@@ -82,14 +82,15 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Real Vehicle Photo Header - Updates dynamically per color choice */}
-      <div className="h-56 w-full relative overflow-hidden bg-slate-900">
+      {/* Exact Vehicle Model Photo Header — Color filter dynamically applied */}
+      <div className="h-56 w-full relative overflow-hidden bg-slate-950">
         {!imageError ? (
           <img
             src={selectedColor.image}
             alt={`${vehicle.make} ${vehicle.model} in ${selectedColor.name}`}
             onError={() => setImageError(true)}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-700 brightness-95 group-hover:brightness-100"
+            style={{ filter: selectedColor.filter || 'none' }}
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-500"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-luxury-card to-slate-900 flex items-center justify-center">
