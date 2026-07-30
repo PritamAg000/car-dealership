@@ -1,6 +1,6 @@
 # 🏎️ Apex Luxury Motors — Full-Stack Car Dealership & Inventory System
 
-[![Live Website](https://img.shields.io/badge/🌐_Live_Demo-Apex_Luxury_Motors-FFB800?style=for-the-badge&logo=vercel)](https://car-dealership-frontend-five.vercel.app/)
+[![Live Website](https://img.shields.io/badge/🌐_Live_Demo-Apex_Luxury_Motors-FFB800?style=for-the-badge&logo=vercel)](https://car-dealership-three-chi.vercel.app/)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi)](https://fastapi.tiangolo.com/)
@@ -12,7 +12,7 @@ An enterprise-grade, full-stack luxury car dealership web application built with
 
 ## 🌐 Live Website Demo
 Click below to test the live hosted application:
-👉 **[Open Apex Luxury Motors Live Web App](https://car-dealership-frontend-five.vercel.app/)**
+👉 **[Open Apex Luxury Motors Live Web App](https://car-dealership-three-chi.vercel.app/)**
 
 ---
 
