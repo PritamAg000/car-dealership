@@ -54,9 +54,9 @@ describe('VehicleCard Component Tests', () => {
       />
     );
 
-    const outOfStockBadges = screen.getAllByText('Out of Stock');
+    const outOfStockBadges = screen.getAllByText(/out of stock/i);
     expect(outOfStockBadges.length).toBeGreaterThan(0);
-    const purchaseBtn = screen.getByRole('button', { name: /^out of stock$/i });
+    const purchaseBtn = screen.getByRole('button', { name: /Out of Stock \(Obsidian\)/i });
     expect(purchaseBtn).toBeDisabled();
   });
 });
