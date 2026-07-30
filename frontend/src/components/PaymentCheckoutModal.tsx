@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CreditCard, Building2, Wallet, ShieldCheck, Lock, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Vehicle, ColorVariant, PaymentDetails } from '../types';
 
@@ -19,8 +19,6 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
   onConfirmPayment,
   isProcessing,
 }) => {
-  if (!isOpen || !vehicle || !selectedColor) return null;
-
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'crypto'>('card');
   
   // Card form state (starts blank for user entry)
@@ -34,6 +32,23 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
   const [city, setCity] = useState('');
   const [state, setState] = useState('');
   const [zip, setZip] = useState('');
+
+  // Reset all fields to blank whenever checkout opens
+  useEffect(() => {
+    if (isOpen) {
+      setCardName('');
+      setCardNumber('');
+      setExpiry('');
+      setCvc('');
+      setStreetAddress('');
+      setCity('');
+      setState('');
+      setZip('');
+      setPaymentMethod('card');
+    }
+  }, [isOpen, vehicle]);
+
+  if (!isOpen || !vehicle || !selectedColor) return null;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -161,7 +176,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Alex Mercer"
+                  placeholder="e.g. John Doe"
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
                   className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm focus:outline-none focus:border-luxury-accent placeholder-slate-600"
