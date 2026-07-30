@@ -17,22 +17,28 @@ def seed_database():
     db: Session = SessionLocal()
 
     try:
-        # Check if users exist
-        if not db.query(User).filter_map if hasattr(db.query(User), 'filter_map') else db.query(User).first():
+        # Check and seed Admin user
+        admin = db.query(User).filter(User.email == "admin@dealership.com").first()
+        if not admin:
             admin_user = User(
                 email="admin@dealership.com",
                 hashed_password=get_password_hash("admin123"),
                 role="admin"
             )
+            db.add(admin_user)
+
+        # Check and seed Customer user
+        customer = db.query(User).filter(User.email == "customer@dealership.com").first()
+        if not customer:
             customer_user = User(
                 email="customer@dealership.com",
                 hashed_password=get_password_hash("customer123"),
                 role="customer"
             )
-            db.add_all([admin_user, customer_user])
+            db.add(customer_user)
 
-        # Check if vehicles exist
-        if not db.query(Vehicle).first():
+        # Check and seed vehicles
+        if db.query(Vehicle).count() == 0:
             vehicles = [
                 Vehicle(make="Tesla", model="Model S Plaid", category="EV", price=89990.0, quantity=3),
                 Vehicle(make="Porsche", model="Taycan Turbo", category="EV", price=150900.0, quantity=2),
@@ -46,7 +52,7 @@ def seed_database():
             db.add_all(vehicles)
 
         db.commit()
-        print("Database seeded successfully!")
+        print("Database seeded successfully with demo accounts!")
     except Exception as e:
         db.rollback()
         print(f"Error seeding database: {e}")
