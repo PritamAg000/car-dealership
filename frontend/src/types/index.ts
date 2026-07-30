@@ -20,6 +20,7 @@ export interface Vehicle {
   model: string;
   category: string;
   color?: string;
+  image_url?: string;
   colors?: ColorVariant[];
   price: number;
   quantity: number;
@@ -32,6 +33,7 @@ export interface VehicleCreate {
   model: string;
   category: string;
   color?: string;
+  image_url?: string;
   price: number;
   quantity: number;
 }
@@ -41,6 +43,7 @@ export interface VehicleUpdate {
   model?: string;
   category?: string;
   color?: string;
+  image_url?: string;
   price?: number;
   quantity?: number;
 }

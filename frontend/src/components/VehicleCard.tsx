@@ -25,8 +25,8 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
   const { isAdmin } = useAuth();
   const isOutOfStock = vehicle.quantity === 0;
 
-  // Load color variants for this vehicle (each with its exact real photograph file)
-  const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category);
+  // Load color variants for this vehicle (prioritizes vehicle.image_url if set by Admin)
+  const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category, vehicle.image_url);
   const [selectedColor, setSelectedColor] = useState<ColorVariant>(availableColors[0]);
 
   // Select category icon & badge styling
@@ -77,7 +77,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Real Vehicle Photo Header — Displays real HD photo for selected color variant */}
+      {/* Real Vehicle Photo Header — Displays photo url set by Admin or matched model photo */}
       <div className="relative">
         <VehicleVisual
           colorHex={selectedColor.hex}

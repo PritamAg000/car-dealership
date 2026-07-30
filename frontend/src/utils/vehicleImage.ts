@@ -1,6 +1,10 @@
-import { ColorVariant } from '../types';
+import { Vehicle, ColorVariant } from '../types';
 
-export const getVehicleImage = (make: string, model: string, category: string): string => {
+export const getVehicleImage = (make: string, model: string, category: string, customImageUrl?: string): string => {
+  if (customImageUrl && customImageUrl.trim() !== '') {
+    return customImageUrl;
+  }
+
   const full = `${make} ${model}`.toLowerCase();
 
   if (full.includes('tesla') || full.includes('model s')) return '/images/tesla.jpg';
@@ -21,8 +25,8 @@ export const getVehicleImage = (make: string, model: string, category: string): 
   return '/images/mercedes_s580.jpg';
 };
 
-export const getVehicleColors = (make: string, model: string, category: string): ColorVariant[] => {
-  const heroImage = getVehicleImage(make, model, category);
+export const getVehicleColors = (make: string, model: string, category: string, customImageUrl?: string): ColorVariant[] => {
+  const heroImage = getVehicleImage(make, model, category, customImageUrl);
   const full = `${make} ${model}`.toLowerCase();
 
   if (full.includes('tesla') || full.includes('model s')) {

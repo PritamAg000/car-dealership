@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Car, DollarSign, Layers, Palette, Hash, Save } from 'lucide-react';
+import { X, Car, DollarSign, Layers, Palette, Hash, Save, Image as ImageIcon } from 'lucide-react';
 import { Vehicle, VehicleCreate } from '../types';
 
 interface AdminVehicleModalProps {
@@ -19,6 +19,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
   const [model, setModel] = useState('');
   const [category, setCategory] = useState('sedan');
   const [color, setColor] = useState('Obsidian Black');
+  const [imageUrl, setImageUrl] = useState('');
   const [price, setPrice] = useState<number | ''>('');
   const [quantity, setQuantity] = useState<number | ''>(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,6 +31,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
       setModel(vehicleToEdit.model);
       setCategory(vehicleToEdit.category);
       setColor(vehicleToEdit.color || 'Obsidian Black');
+      setImageUrl(vehicleToEdit.image_url || '');
       setPrice(vehicleToEdit.price);
       setQuantity(vehicleToEdit.quantity);
     } else {
@@ -37,6 +39,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
       setModel('');
       setCategory('sedan');
       setColor('Stealth Metallic Cyan');
+      setImageUrl('');
       setPrice('');
       setQuantity(1);
     }
@@ -60,6 +63,7 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
         model,
         category,
         color,
+        image_url: imageUrl,
         price: Number(price),
         quantity: Number(quantity),
       });
@@ -135,6 +139,32 @@ export const AdminVehicleModal: React.FC<AdminVehicleModalProps> = ({
                 className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm focus:outline-none focus:border-luxury-accent placeholder-slate-600"
               />
             </div>
+          </div>
+
+          {/* Photo URL & Live Preview Section */}
+          <div>
+            <label className="block font-semibold text-luxury-muted mb-1 uppercase tracking-wider flex items-center gap-1">
+              <ImageIcon className="w-3.5 h-3.5 text-cyan-400" /> Vehicle Photo Image URL / Asset Path
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. /images/tesla.jpg or https://images.unsplash.com/..."
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm focus:outline-none focus:border-luxury-accent placeholder-slate-600"
+            />
+            {imageUrl && (
+              <div className="mt-2 h-24 rounded-xl overflow-hidden relative border border-luxury-border/40 bg-slate-950">
+                <img
+                  src={imageUrl}
+                  alt="Vehicle Preview"
+                  className="w-full h-full object-cover object-center"
+                  onError={(e) => {
+                    (e.target as HTMLElement).style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
