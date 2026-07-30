@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Vehicle } from '../types';
 import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -22,24 +22,53 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
 }) => {
   const { isAdmin } = useAuth();
   const isOutOfStock = vehicle.quantity === 0;
+  const [imageError, setImageError] = useState(false);
 
-  // Select category icon/color
-  const getCategoryTheme = (category: string) => {
+  // Select category theme & image
+  const getCategoryDetails = (category: string) => {
     const cat = category.toLowerCase();
     if (cat.includes('ev') || cat.includes('electric')) {
-      return { icon: Zap, bg: 'from-cyan-900/40 to-blue-950/60', text: 'text-cyan-400', badge: 'bg-cyan-500/10 border-cyan-500/30 text-cyan-300' };
+      return {
+        icon: Zap,
+        image: '/images/ev.jpg',
+        badge: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300',
+        text: 'text-cyan-400'
+      };
     }
     if (cat.includes('suv')) {
-      return { icon: Shield, bg: 'from-emerald-900/40 to-teal-950/60', text: 'text-emerald-400', badge: 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' };
+      return {
+        icon: Shield,
+        image: '/images/suv.jpg',
+        badge: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
+        text: 'text-emerald-400'
+      };
     }
     if (cat.includes('truck')) {
-      return { icon: Truck, bg: 'from-amber-900/40 to-orange-950/60', text: 'text-amber-400', badge: 'bg-amber-500/10 border-amber-500/30 text-amber-300' };
+      return {
+        icon: Truck,
+        image: '/images/truck.jpg',
+        badge: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
+        text: 'text-amber-400'
+      };
     }
-    return { icon: Car, bg: 'from-purple-900/40 to-indigo-950/60', text: 'text-purple-400', badge: 'bg-purple-500/10 border-purple-500/30 text-purple-300' };
+    if (cat.includes('coupe')) {
+      return {
+        icon: Car,
+        image: '/images/coupe.jpg',
+        badge: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',
+        text: 'text-yellow-400'
+      };
+    }
+    return {
+      icon: Car,
+      image: '/images/sedan.jpg',
+      badge: 'bg-purple-500/20 border-purple-500/40 text-purple-300',
+      text: 'text-purple-400'
+    };
   };
 
-  const theme = getCategoryTheme(vehicle.category);
-  const Icon = theme.icon;
+  const details = getCategoryDetails(vehicle.category);
+  const Icon = details.icon;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -53,29 +82,40 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Category Visual Header / Placeholder Image */}
-      <div className={`h-48 w-full bg-gradient-to-br ${theme.bg} relative flex items-center justify-center p-6 overflow-hidden`}>
-        {/* Abstract luxury grid effect */}
-        <div className="absolute inset-0 bg-[radial-gradient(#3A506B_1px,transparent_1px)] [background-size:16px_16px] opacity-20"></div>
+      {/* Real Vehicle Photo Header */}
+      <div className="h-52 w-full relative overflow-hidden bg-slate-900">
+        {!imageError ? (
+          <img
+            src={details.image}
+            alt={`${vehicle.make} ${vehicle.model}`}
+            onError={() => setImageError(true)}
+            className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 brightness-90 group-hover:brightness-100"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-luxury-card to-slate-900 flex items-center justify-center">
+            <Icon className={`w-20 h-20 ${details.text} opacity-30`} />
+          </div>
+        )}
 
-        <Icon className={`w-24 h-24 ${theme.text} opacity-30 group-hover:scale-110 transition-transform duration-500 stroke-[1.5]`} />
+        {/* Overlay gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-luxury-dark via-transparent to-black/40"></div>
 
         {/* Category Badge */}
-        <div className="absolute top-4 left-4">
-          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border backdrop-blur-md ${theme.badge}`}>
+        <div className="absolute top-4 left-4 z-10">
+          <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider border backdrop-blur-md shadow-md ${details.badge}`}>
             <Icon className="w-3.5 h-3.5" />
             {vehicle.category}
           </span>
         </div>
 
         {/* Stock Status Badge */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 z-10">
           {isOutOfStock ? (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40 uppercase tracking-wider shadow-sm">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-500/80 text-white border border-rose-400 uppercase tracking-wider shadow-lg backdrop-blur-md">
               Out of Stock
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase tracking-wider">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 uppercase tracking-wider backdrop-blur-md shadow-md">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
               {vehicle.quantity} In Stock
             </span>
