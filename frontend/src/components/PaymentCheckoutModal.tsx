@@ -23,17 +23,17 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
 
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank' | 'crypto'>('card');
   
-  // Card form state
-  const [cardName, setCardName] = useState('Alex Mercer');
-  const [cardNumber, setCardNumber] = useState('4242 •••• •••• 4242');
-  const [expiry, setExpiry] = useState('12/28');
-  const [cvc, setCvc] = useState('888');
+  // Card form state (starts blank for user entry)
+  const [cardName, setCardName] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvc, setCvc] = useState('');
 
-  // Address state
-  const [streetAddress, setStreetAddress] = useState('742 Evergreen Terrace');
-  const [city, setCity] = useState('Los Angeles');
-  const [state, setState] = useState('CA');
-  const [zip, setZip] = useState('90001');
+  // Address state (starts blank for user entry)
+  const [streetAddress, setStreetAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [state, setState] = useState('');
+  const [zip, setZip] = useState('');
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -161,9 +161,10 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                 <input
                   type="text"
                   required
+                  placeholder="e.g. Alex Mercer"
                   value={cardName}
                   onChange={(e) => setCardName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm focus:outline-none focus:border-luxury-accent"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                 />
               </div>
 
@@ -173,9 +174,10 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   <input
                     type="text"
                     required
+                    placeholder="4532 •••• •••• 8899"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                   />
                   <CreditCard className="w-4 h-4 text-luxury-muted absolute right-3.5 top-3" />
                 </div>
@@ -187,9 +189,10 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   <input
                     type="text"
                     required
+                    placeholder="MM/YY"
                     value={expiry}
                     onChange={(e) => setExpiry(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                   />
                 </div>
                 <div>
@@ -198,9 +201,10 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                     type="password"
                     required
                     maxLength={4}
+                    placeholder="CVC"
                     value={cvc}
                     onChange={(e) => setCvc(e.target.value)}
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent"
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-sm font-mono focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                   />
                 </div>
               </div>
@@ -249,11 +253,11 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
               <div className="sm:col-span-3">
                 <input
                   type="text"
-                  placeholder="Street Address"
+                  placeholder="Street Address (e.g. 742 Evergreen Terrace)"
                   required
                   value={streetAddress}
                   onChange={(e) => setStreetAddress(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                 />
               </div>
               <div>
@@ -263,7 +267,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   required
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                 />
               </div>
               <div>
@@ -273,7 +277,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   required
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                 />
               </div>
               <div>
@@ -283,7 +287,7 @@ export const PaymentCheckoutModal: React.FC<PaymentCheckoutModalProps> = ({
                   required
                   value={zip}
                   onChange={(e) => setZip(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-luxury-border/50 text-white text-xs focus:outline-none focus:border-luxury-accent placeholder-slate-600"
                 />
               </div>
             </div>

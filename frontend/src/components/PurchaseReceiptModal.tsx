@@ -123,8 +123,8 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
               <div className="text-[11px] font-semibold uppercase tracking-wider text-luxury-muted flex items-center gap-1.5">
                 <MapPin className="w-3.5 h-3.5 text-cyan-400" /> Delivery Address
               </div>
-              <div className="text-xs font-semibold text-white">742 Evergreen Terrace, Los Angeles, CA 90001</div>
-              <div className="text-[11px] text-cyan-300 pt-0.5">En Route via Luxury Covered Transport</div>
+              <div className="text-xs font-semibold text-white">Title Registration Address On File</div>
+              <div className="text-[11px] text-cyan-300 pt-0.5">En Route via White-Glove Flatbed Transport</div>
             </div>
           </div>
 
