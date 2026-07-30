@@ -75,7 +75,6 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
               <img
                 src={selectedImage}
                 alt={`${vehicle.make} ${vehicle.model} in ${selectedColor}`}
-                style={{ filter: selectedFilter || 'none' }}
                 className="w-full h-full object-cover object-center"
               />
               <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-black/70 text-luxury-accent border border-luxury-accent/40 backdrop-blur-md">
@@ -96,7 +95,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
                 <Palette className="w-4 h-4 text-amber-400" />
                 <span className="text-xs text-luxury-muted">Selected Finish:</span>
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/10 border border-amber-500/30 text-amber-200">
-                  <span className="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-amber-400 to-yellow-200 shadow-sm"></span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-sm"></span>
                   {selectedColor}
                 </span>
               </div>

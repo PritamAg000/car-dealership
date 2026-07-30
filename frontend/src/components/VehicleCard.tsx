@@ -3,6 +3,7 @@ import { Vehicle, ColorVariant } from '../types';
 import { ShoppingBag, Edit3, Trash2, RefreshCw, Zap, Shield, Car, Truck, Palette, Check } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getVehicleColors } from '../utils/vehicleImage';
+import { VehicleVisual } from './VehicleVisual';
 
 interface VehicleCardProps {
   vehicle: Vehicle;
@@ -23,7 +24,6 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
 }) => {
   const { isAdmin } = useAuth();
   const isOutOfStock = vehicle.quantity === 0;
-  const [imageError, setImageError] = useState(false);
 
   // Load color variants for this vehicle (all sharing the exact same car model photo)
   const availableColors = getVehicleColors(vehicle.make, vehicle.model, vehicle.category);
@@ -36,34 +36,29 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
       return {
         icon: Zap,
         badge: 'bg-cyan-500/20 border-cyan-500/40 text-cyan-300',
-        text: 'text-cyan-400'
       };
     }
     if (cat.includes('suv')) {
       return {
         icon: Shield,
         badge: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300',
-        text: 'text-emerald-400'
       };
     }
     if (cat.includes('truck')) {
       return {
         icon: Truck,
         badge: 'bg-amber-500/20 border-amber-500/40 text-amber-300',
-        text: 'text-amber-400'
       };
     }
     if (cat.includes('coupe')) {
       return {
         icon: Car,
         badge: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-300',
-        text: 'text-yellow-400'
       };
     }
     return {
       icon: Car,
       badge: 'bg-purple-500/20 border-purple-500/40 text-purple-300',
-      text: 'text-purple-400'
     };
   };
 
@@ -82,24 +77,15 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
         isOutOfStock ? 'opacity-75 border-slate-700/50' : 'border-luxury-border/40'
       }`}
     >
-      {/* Exact Vehicle Model Photo Header — Color filter dynamically applied */}
-      <div className="h-56 w-full relative overflow-hidden bg-slate-950">
-        {!imageError ? (
-          <img
-            src={selectedColor.image}
-            alt={`${vehicle.make} ${vehicle.model} in ${selectedColor.name}`}
-            onError={() => setImageError(true)}
-            style={{ filter: selectedColor.filter || 'none' }}
-            className="w-full h-full object-cover object-center group-hover:scale-105 transition-all duration-500"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-luxury-card to-slate-900 flex items-center justify-center">
-            <Icon className={`w-20 h-20 ${details.text} opacity-30`} />
-          </div>
-        )}
-
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-luxury-dark via-transparent to-black/40"></div>
+      {/* Vehicle Visual Header — Real car photo with metallic color blend shader */}
+      <div className="relative">
+        <VehicleVisual
+          colorHex={selectedColor.hex}
+          category={vehicle.category}
+          photoUrl={selectedColor.image}
+          make={vehicle.make}
+          model={vehicle.model}
+        />
 
         {/* Category Badge */}
         <div className="absolute top-4 left-4 z-10">
@@ -134,35 +120,40 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             {vehicle.model}
           </h2>
 
-          {/* Color Selector Section */}
-          <div className="mb-4">
+          {/* Color Swatch Picker Section */}
+          <div className="mb-4 p-3 rounded-xl bg-luxury-dark/60 border border-luxury-border/30">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-luxury-muted flex items-center gap-1">
-                <Palette className="w-3.5 h-3.5 text-amber-400" /> Color:
+              <span className="text-xs text-luxury-muted flex items-center gap-1.5 font-medium">
+                <Palette className="w-3.5 h-3.5 text-amber-400" /> Exterior Paint:
               </span>
-              <span className="text-xs font-semibold text-amber-300">{selectedColor.name}</span>
+              <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                <span
+                  className="w-2.5 h-2.5 rounded-full border border-white/40 shadow-sm"
+                  style={{ backgroundColor: selectedColor.hex }}
+                ></span>
+                {selectedColor.name}
+              </span>
             </div>
 
-            {/* Swatch Color Pickers */}
-            <div className="flex items-center gap-2">
+            {/* Color Swatches */}
+            <div className="flex items-center gap-2.5 pt-1">
               {availableColors.map((col) => {
                 const isSelected = selectedColor.name === col.name;
                 return (
                   <button
                     key={col.name}
-                    onClick={() => {
-                      setSelectedColor(col);
-                      setImageError(false);
-                    }}
+                    onClick={() => setSelectedColor(col)}
                     title={col.name}
-                    className={`w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center ${
+                    className={`w-7 h-7 rounded-full border-2 transition-all flex items-center justify-center relative ${
                       isSelected
-                        ? 'border-luxury-accent scale-110 shadow-lg shadow-luxury-accent/30'
-                        : 'border-slate-600 opacity-70 hover:opacity-100 hover:scale-105'
+                        ? 'border-white scale-110 shadow-lg shadow-black/50 ring-2 ring-luxury-accent'
+                        : 'border-slate-500/60 opacity-80 hover:opacity-100 hover:scale-105'
                     }`}
                     style={{ backgroundColor: col.hex }}
                   >
-                    {isSelected && <Check className="w-3 h-3 text-luxury-dark stroke-[3]" />}
+                    {isSelected && (
+                      <Check className={`w-3.5 h-3.5 stroke-[3] ${col.hex === '#FFFFFF' || col.hex === '#F8FAFC' ? 'text-black' : 'text-white'}`} />
+                    )}
                   </button>
                 );
               })}
