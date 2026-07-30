@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, CheckCircle2, Shield, Calendar, Truck, Award, Palette, Hash } from 'lucide-react';
+import { X, CheckCircle2, Shield, Calendar, Truck, Award, Palette, Hash, CreditCard, MapPin } from 'lucide-react';
 import { PurchaseReceipt } from '../types';
 
 interface PurchaseReceiptModalProps {
@@ -15,7 +15,7 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
 }) => {
   if (!isOpen || !receipt) return null;
 
-  const { vehicle, selectedColor, selectedImage, selectedFilter, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
+  const { vehicle, selectedColor, selectedImage, paymentMethod, orderId, buyerEmail, purchaseDate, deliveryDate, warranty, specifications } = receipt;
 
   const formattedPrice = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -34,10 +34,10 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
             </div>
             <div>
               <div className="text-xs uppercase tracking-widest text-emerald-400 font-bold">
-                Order Confirmed & Reserved
+                Payment Authorized & Title Reserved
               </div>
               <h2 className="text-2xl font-extrabold text-white tracking-tight font-sans">
-                Purchase Order Details
+                Official Purchase Receipt
               </h2>
             </div>
           </div>
@@ -104,6 +104,27 @@ export const PurchaseReceiptModal: React.FC<PurchaseReceiptModalProps> = ({
               <div className="text-2xl font-black text-white font-sans pt-1">
                 {formattedPrice}
               </div>
+            </div>
+          </div>
+
+          {/* Payment Method & Delivery Information */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="p-4 rounded-2xl bg-luxury-dark/60 border border-luxury-border/40 space-y-1">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-luxury-muted flex items-center gap-1.5">
+                <CreditCard className="w-3.5 h-3.5 text-luxury-gold" /> Payment Authorized
+              </div>
+              <div className="text-sm font-bold text-white">{paymentMethod}</div>
+              <div className="text-[11px] text-emerald-400 font-semibold flex items-center gap-1 pt-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> Escrow Verified & Paid in Full
+              </div>
+            </div>
+
+            <div className="p-4 rounded-2xl bg-luxury-dark/60 border border-luxury-border/40 space-y-1">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-luxury-muted flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-cyan-400" /> Delivery Address
+              </div>
+              <div className="text-xs font-semibold text-white">742 Evergreen Terrace, Los Angeles, CA 90001</div>
+              <div className="text-[11px] text-cyan-300 pt-0.5">En Route via Luxury Covered Transport</div>
             </div>
           </div>
 

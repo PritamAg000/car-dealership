@@ -59,12 +59,24 @@ export interface SearchFilters {
   max_price?: number;
 }
 
+export interface PaymentDetails {
+  method: 'card' | 'bank' | 'crypto';
+  cardName?: string;
+  cardNumber?: string;
+  expiry?: string;
+  cvc?: string;
+  streetAddress?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+}
+
 export interface PurchaseReceipt {
   orderId: string;
   vehicle: Vehicle;
   selectedColor: string;
   selectedImage: string;
-  selectedFilter?: string;
+  paymentMethod: string;
   buyerEmail: string;
   purchaseDate: string;
   deliveryDate: string;

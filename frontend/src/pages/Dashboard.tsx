@@ -4,11 +4,12 @@ import { VehicleCard } from '../components/VehicleCard';
 import { SearchFilterBar } from '../components/SearchFilterBar';
 import { AdminVehicleModal } from '../components/AdminVehicleModal';
 import { RestockModal } from '../components/RestockModal';
+import { PaymentCheckoutModal } from '../components/PaymentCheckoutModal';
 import { PurchaseReceiptModal } from '../components/PurchaseReceiptModal';
 import { Toast, ToastProps } from '../components/Toast';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../services/api';
-import { Vehicle, VehicleCreate, SearchFilters, PurchaseReceipt, ColorVariant } from '../types';
+import { Vehicle, VehicleCreate, SearchFilters, PurchaseReceipt, ColorVariant, PaymentDetails } from '../types';
 import { Car, AlertTriangle, Layers } from 'lucide-react';
 
 export const Dashboard: React.FC = () => {
@@ -26,6 +27,12 @@ export const Dashboard: React.FC = () => {
   const [restockVehicle, setRestockVehicle] = useState<Vehicle | null>(null);
 
   const [deleteTarget, setDeleteTarget] = useState<Vehicle | null>(null);
+
+  // Payment Checkout Modal State
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [checkoutVehicle, setCheckoutVehicle] = useState<Vehicle | null>(null);
+  const [checkoutColor, setCheckoutColor] = useState<ColorVariant | null>(null);
+  const [isPaymentProcessing, setIsPaymentProcessing] = useState(false);
 
   // Purchase Receipt Modal State
   const [receipt, setReceipt] = useState<PurchaseReceipt | null>(null);
@@ -68,23 +75,44 @@ export const Dashboard: React.FC = () => {
     fetchVehicles();
   }, [fetchVehicles]);
 
-  // Purchase Handler with Selected Color Support & Receipt Modal
-  const handlePurchase = async (vehicle: Vehicle, selectedColor: ColorVariant) => {
-    if (!token) return;
+  // Initial Purchase Click: Open Payment Checkout Modal
+  const handleInitiatePurchase = (vehicle: Vehicle, selectedColor: ColorVariant) => {
+    setCheckoutVehicle(vehicle);
+    setCheckoutColor(selectedColor);
+    setIsCheckoutOpen(true);
+  };
+
+  // Payment Execution Handler
+  const handleConfirmPayment = async (paymentData: PaymentDetails) => {
+    if (!token || !checkoutVehicle || !checkoutColor) return;
     try {
-      setPurchasingId(vehicle.id);
-      const updated = await api.purchaseVehicle(token, vehicle.id, 1);
+      setIsPaymentProcessing(true);
+      setPurchasingId(checkoutVehicle.id);
 
-      // Immediate UI update
-      setVehicles((prev) => prev.map((v) => (v.id === vehicle.id ? updated : v)));
+      // Execute backend purchase API (atomic row-locking stock decrement)
+      const updated = await api.purchaseVehicle(token, checkoutVehicle.id, 1);
 
-      // Construct detailed purchase receipt with selected color, image, and filter
+      // Immediate UI stock update
+      setVehicles((prev) => prev.map((v) => (v.id === checkoutVehicle.id ? updated : v)));
+
+      // Payment method summary string
+      let methodSummary = 'Credit Card (Visa ending in 4242)';
+      if (paymentData.method === 'bank') {
+        methodSummary = 'Direct Wire Escrow Transfer (Chase Bank)';
+      } else if (paymentData.method === 'crypto') {
+        methodSummary = 'Bitcoin Escrow Wallet (Zero-Confirmation)';
+      } else if (paymentData.cardNumber) {
+        const last4 = paymentData.cardNumber.replace(/\s+/g, '').slice(-4) || '4242';
+        methodSummary = `Credit Card (Visa ending in ${last4})`;
+      }
+
+      // Construct detailed purchase receipt with selected color, image, and payment details
       const receiptData: PurchaseReceipt = {
         orderId: `APX-${Math.floor(100000 + Math.random() * 900000)}`,
         vehicle: updated,
-        selectedColor: selectedColor.name,
-        selectedImage: selectedColor.image,
-        selectedFilter: selectedColor.filter,
+        selectedColor: checkoutColor.name,
+        selectedImage: checkoutColor.image,
+        paymentMethod: methodSummary,
         buyerEmail: user?.email || 'customer@dealership.com',
         purchaseDate: new Date().toLocaleDateString('en-US', {
           year: 'numeric',
@@ -102,13 +130,15 @@ export const Dashboard: React.FC = () => {
         },
       };
 
+      setIsCheckoutOpen(false);
       setReceipt(receiptData);
       setIsReceiptOpen(true);
-      showToast(`Successfully purchased ${vehicle.make} ${vehicle.model} in ${selectedColor.name}!`, 'success');
+      showToast(`Payment authorized! Successfully purchased ${updated.make} ${updated.model} in ${checkoutColor.name}.`, 'success');
     } catch (err: any) {
-      showToast(err.message || 'Purchase failed.', 'error');
+      showToast(err.message || 'Payment processing failed.', 'error');
       fetchVehicles();
     } finally {
+      setIsPaymentProcessing(false);
       setPurchasingId(null);
     }
   };
@@ -205,7 +235,7 @@ export const Dashboard: React.FC = () => {
               <VehicleCard
                 key={v.id}
                 vehicle={v}
-                onPurchase={handlePurchase}
+                onPurchase={handleInitiatePurchase}
                 onEdit={(veh) => {
                   setEditingVehicle(veh);
                   setIsAddEditOpen(true);
@@ -236,6 +266,16 @@ export const Dashboard: React.FC = () => {
         onClose={() => setIsRestockOpen(false)}
         vehicle={restockVehicle}
         onRestock={handleRestock}
+      />
+
+      {/* Interactive Payment Checkout Modal */}
+      <PaymentCheckoutModal
+        isOpen={isCheckoutOpen}
+        onClose={() => setIsCheckoutOpen(false)}
+        vehicle={checkoutVehicle}
+        selectedColor={checkoutColor}
+        onConfirmPayment={handleConfirmPayment}
+        isProcessing={isPaymentProcessing}
       />
 
       {/* Post-Purchase Order Details Modal */}
