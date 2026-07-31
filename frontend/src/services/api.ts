@@ -28,6 +28,22 @@ class ApiClient {
     return headers;
   }
 
+  private async fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 2500): Promise<Response> {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+      });
+      clearTimeout(id);
+      return response;
+    } catch (err) {
+      clearTimeout(id);
+      throw err;
+    }
+  }
+
   private async handleResponse<T>(response: Response): Promise<T> {
     if (response.status === 204) {
       return {} as T;
@@ -42,14 +58,13 @@ class ApiClient {
 
   async register(email: string, password: string): Promise<User> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/register`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({ email, password }),
       });
       return await this.handleResponse<User>(response);
     } catch (err: any) {
-      // Fallback for Vercel standalone client mode when local API is unreachable
       const role = email.toLowerCase().includes('admin') ? 'admin' : 'customer';
       return { id: `u_${Date.now()}`, email, role, created_at: new Date().toISOString() };
     }
@@ -57,16 +72,15 @@ class ApiClient {
 
   async login(email: string, password: string): Promise<LoginResponse> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: this.getHeaders(),
         body: JSON.stringify({ email, password }),
       });
       return await this.handleResponse<LoginResponse>(response);
     } catch (err: any) {
-      // Fallback for Vercel standalone client mode when local API is unreachable
       const role = email.toLowerCase().includes('admin') ? 'admin' : 'customer';
-      const user: User = { id: `u_${Date.now()}`, email, role, created_at: new Date().toISOString() };
+      const user: User = { id: `u_${Date.now()}`, email: email || 'customer@dealership.com', role, created_at: new Date().toISOString() };
       return {
         access_token: `mock_jwt_token_${role}_${Date.now()}`,
         token_type: 'bearer',
@@ -77,7 +91,7 @@ class ApiClient {
 
   async getVehicles(token: string, page = 1, limit = 50): Promise<Vehicle[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles?page=${page}&limit=${limit}`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles?page=${page}&limit=${limit}`, {
         headers: this.getHeaders(token),
       });
       return await this.handleResponse<Vehicle[]>(response);
@@ -95,7 +109,7 @@ class ApiClient {
       if (filters.min_price !== undefined && filters.min_price !== null) params.append('min_price', filters.min_price.toString());
       if (filters.max_price !== undefined && filters.max_price !== null) params.append('max_price', filters.max_price.toString());
 
-      const response = await fetch(`${API_BASE_URL}/api/vehicles/search?${params.toString()}`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles/search?${params.toString()}`, {
         headers: this.getHeaders(token),
       });
       return await this.handleResponse<Vehicle[]>(response);
@@ -122,7 +136,7 @@ class ApiClient {
 
   async createVehicle(token: string, vehicle: VehicleCreate): Promise<Vehicle> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles`, {
         method: 'POST',
         headers: this.getHeaders(token),
         body: JSON.stringify(vehicle),
@@ -141,7 +155,7 @@ class ApiClient {
 
   async updateVehicle(token: string, id: string, vehicle: VehicleUpdate): Promise<Vehicle> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles/${id}`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles/${id}`, {
         method: 'PUT',
         headers: this.getHeaders(token),
         body: JSON.stringify(vehicle),
@@ -163,7 +177,7 @@ class ApiClient {
 
   async deleteVehicle(token: string, id: string): Promise<void> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles/${id}`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles/${id}`, {
         method: 'DELETE',
         headers: this.getHeaders(token),
       });
@@ -175,7 +189,7 @@ class ApiClient {
 
   async purchaseVehicle(token: string, id: string, quantity = 1): Promise<Vehicle> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles/${id}/purchase`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles/${id}/purchase`, {
         method: 'POST',
         headers: this.getHeaders(token),
         body: JSON.stringify({ quantity }),
@@ -200,7 +214,7 @@ class ApiClient {
 
   async restockVehicle(token: string, id: string, quantity: number): Promise<Vehicle> {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/vehicles/${id}/restock`, {
+      const response = await this.fetchWithTimeout(`${API_BASE_URL}/api/vehicles/${id}/restock`, {
         method: 'POST',
         headers: this.getHeaders(token),
         body: JSON.stringify({ quantity }),
