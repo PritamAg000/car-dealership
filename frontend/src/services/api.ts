@@ -1,6 +1,6 @@
 import { User, Vehicle, VehicleCreate, VehicleUpdate, LoginResponse, SearchFilters } from '../types';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://car-dealership-backend-exs.onrender.com';
 
 const STORAGE_KEY = 'apex_luxury_inventory_v1';
 
@@ -54,7 +54,7 @@ class ApiClient {
     return headers;
   }
 
-  private async fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 2500): Promise<Response> {
+  private async fetchWithTimeout(url: string, options: RequestInit = {}, timeoutMs = 3000): Promise<Response> {
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeoutMs);
     try {
