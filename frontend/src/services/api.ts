@@ -2,7 +2,9 @@ import { User, Vehicle, VehicleCreate, VehicleUpdate, LoginResponse, SearchFilte
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
-// Mock seed database state for standalone Vercel client deployment fallback
+const STORAGE_KEY = 'apex_luxury_inventory_v1';
+
+// Default seed vehicles
 const MOCK_VEHICLES: Vehicle[] = [
   { id: 'v1', make: 'Tesla', model: 'Model S Plaid', category: 'EV', color: 'Stealth Metallic Cyan', price: 89990, quantity: 5 },
   { id: 'v2', make: 'Porsche', model: '911 GT3 RS', category: 'coupe', color: 'Sunset Amber Gold', price: 241300, quantity: 3 },
@@ -15,7 +17,31 @@ const MOCK_VEHICLES: Vehicle[] = [
   { id: 'v9', make: 'Audi', model: 'RS Q8', category: 'SUV', color: 'Nardo Grey', price: 125800, quantity: 4 },
 ];
 
-let inMemoryVehicles = [...MOCK_VEHICLES];
+// Helper to get inventory state from localStorage or seed
+const getStoredVehicles = (): Vehicle[] => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error('Failed to read from localStorage:', e);
+  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(MOCK_VEHICLES));
+  return MOCK_VEHICLES;
+};
+
+// Helper to save inventory state to localStorage
+const saveStoredVehicles = (vehicles: Vehicle[]): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(vehicles));
+  } catch (e) {
+    console.error('Failed to write to localStorage:', e);
+  }
+};
 
 class ApiClient {
   private getHeaders(token?: string | null): HeadersInit {
@@ -96,7 +122,7 @@ class ApiClient {
       });
       return await this.handleResponse<Vehicle[]>(response);
     } catch (err: any) {
-      return [...inMemoryVehicles];
+      return getStoredVehicles();
     }
   }
 
@@ -114,7 +140,7 @@ class ApiClient {
       });
       return await this.handleResponse<Vehicle[]>(response);
     } catch (err: any) {
-      let filtered = [...inMemoryVehicles];
+      let filtered = getStoredVehicles();
       if (filters.make) {
         filtered = filtered.filter(v => v.make.toLowerCase().includes(filters.make!.toLowerCase()));
       }
@@ -148,7 +174,9 @@ class ApiClient {
         id: `v_${Date.now()}`,
         created_at: new Date().toISOString(),
       };
-      inMemoryVehicles = [newVehicle, ...inMemoryVehicles];
+      const current = getStoredVehicles();
+      const updatedList = [newVehicle, ...current];
+      saveStoredVehicles(updatedList);
       return newVehicle;
     }
   }
@@ -162,16 +190,18 @@ class ApiClient {
       });
       return await this.handleResponse<Vehicle>(response);
     } catch (err: any) {
-      let updated: Vehicle | null = null;
-      inMemoryVehicles = inMemoryVehicles.map(v => {
+      let updatedVehicle: Vehicle | null = null;
+      const current = getStoredVehicles();
+      const updatedList = current.map(v => {
         if (v.id === id) {
-          updated = { ...v, ...vehicle };
-          return updated;
+          updatedVehicle = { ...v, ...vehicle };
+          return updatedVehicle;
         }
         return v;
       });
-      if (!updated) throw new Error('Vehicle not found');
-      return updated;
+      if (!updatedVehicle) throw new Error('Vehicle not found');
+      saveStoredVehicles(updatedList);
+      return updatedVehicle;
     }
   }
 
@@ -183,7 +213,9 @@ class ApiClient {
       });
       return await this.handleResponse<void>(response);
     } catch (err: any) {
-      inMemoryVehicles = inMemoryVehicles.filter(v => v.id !== id);
+      const current = getStoredVehicles();
+      const updatedList = current.filter(v => v.id !== id);
+      saveStoredVehicles(updatedList);
     }
   }
 
@@ -196,19 +228,21 @@ class ApiClient {
       });
       return await this.handleResponse<Vehicle>(response);
     } catch (err: any) {
-      let updated: Vehicle | null = null;
-      inMemoryVehicles = inMemoryVehicles.map(v => {
+      let updatedVehicle: Vehicle | null = null;
+      const current = getStoredVehicles();
+      const updatedList = current.map(v => {
         if (v.id === id) {
           if (v.quantity < quantity) {
             throw new Error('Vehicle out of stock.');
           }
-          updated = { ...v, quantity: v.quantity - quantity };
-          return updated;
+          updatedVehicle = { ...v, quantity: v.quantity - quantity };
+          return updatedVehicle;
         }
         return v;
       });
-      if (!updated) throw new Error('Vehicle not found');
-      return updated;
+      if (!updatedVehicle) throw new Error('Vehicle not found');
+      saveStoredVehicles(updatedList);
+      return updatedVehicle;
     }
   }
 
@@ -221,16 +255,18 @@ class ApiClient {
       });
       return await this.handleResponse<Vehicle>(response);
     } catch (err: any) {
-      let updated: Vehicle | null = null;
-      inMemoryVehicles = inMemoryVehicles.map(v => {
+      let updatedVehicle: Vehicle | null = null;
+      const current = getStoredVehicles();
+      const updatedList = current.map(v => {
         if (v.id === id) {
-          updated = { ...v, quantity: v.quantity + quantity };
-          return updated;
+          updatedVehicle = { ...v, quantity: v.quantity + quantity };
+          return updatedVehicle;
         }
         return v;
       });
-      if (!updated) throw new Error('Vehicle not found');
-      return updated;
+      if (!updatedVehicle) throw new Error('Vehicle not found');
+      saveStoredVehicles(updatedList);
+      return updatedVehicle;
     }
   }
 }
