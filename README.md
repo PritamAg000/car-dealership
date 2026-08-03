@@ -1,6 +1,6 @@
 # 🏎️ Apex Luxury Motors — Full-Stack Car Dealership & Inventory System
 
-[![Live Website](https://img.shields.io/badge/🌐_Live_Demo-Apex_Luxury_Motors-FFB800?style=for-the-badge&logo=vercel)](https://car-dealership-three-chi.vercel.app/)
+[![Live Website](https://img.shields.io/badge/🌐_Live_Demo-Apex_Luxury_Motors-FFB800?style=for-the-badge&logo=vercel)](https://car-dealership-pritam12.vercel.app/)
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/PritamAg000/car-dealership)
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript)](https://www.typescriptlang.org/)
@@ -12,7 +12,8 @@ An enterprise-grade, full-stack luxury car dealership web application built with
 ---
 
 ## 🌐 Live Website Demo & Cloud Deployment
-- **Frontend App**: 👉 **[Open Apex Luxury Motors Live Web App](https://car-dealership-three-chi.vercel.app/)**
+- **Frontend App (Primary Domain)**: 👉 **[Open Apex Luxury Motors Live Web App](https://car-dealership-pritam12.vercel.app/)**
+- **Frontend App (Secondary Domain)**: 👉 **[Alternative Mirror Link](https://car-dealership-three-chi.vercel.app/)**
 - **Deploy Cloud Backend**: 👉 **[Deploy Backend on Render](https://render.com/deploy?repo=https://github.com/PritamAg000/car-dealership)**
 
 ---
